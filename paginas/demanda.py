@@ -1,14 +1,16 @@
 """Pagina de analisis de demanda y ocupacion (Tablas 26 a 30 y Figuras 13 a 15 del Capitulo IV)."""
 import numpy as np
 import streamlit as st
+
 from scipy import stats
 
 import analisis
-from comun import AZ, GR, NA, coma, formato_df, nueva_figura
+from comun import AZ, GR, NA, VE, coma, formato_df, nueva_figura, aplicar_estilo
 import matplotlib.pyplot as plt
 
 
 def mostrar(conn, usuario):
+    aplicar_estilo()
     st.header("Demanda y ocupación")
     solo_ok = st.checkbox("Usar solo registros con calidad OK", value=False, key="demanda_solo_ok")
     df = analisis.cargar_viajes(conn, solo_ok=solo_ok)

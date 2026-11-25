@@ -8,10 +8,12 @@ import db
 import importar
 import registro
 import seguridad
-from comun import formato_df
+from comun import aplicar_estilo, formato_df
+import matplotlib.pyplot as plt
 
 
 def mostrar(conn, usuario):
+    aplicar_estilo()
     st.header("Datos")
     rol = usuario["rol"]
     nombres = ["Viajes", "Registrar salida", "Calidad de datos"]
@@ -51,7 +53,7 @@ def _viajes(conn):
 
 def _registrar(conn, usuario):
     st.subheader("Registrar una salida nueva")
-    st.caption("Estos datos reemplazan con el tiempo los parámetros sintéticos (ausentes, hora real de salida).")
+    st.caption("Estos datos reemplazar con el tiempo los parámetros sintéticos (ausentes, hora real de salida).")
     buses = [r[0] for r in conn.execute("SELECT numero FROM buses ORDER BY numero").fetchall()]
     with st.form("form_salida"):
         c1, c2 = st.columns(2)

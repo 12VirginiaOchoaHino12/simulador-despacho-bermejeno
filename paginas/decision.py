@@ -5,7 +5,7 @@ import streamlit as st
 import db
 import recomendacion
 import simulacion
-from comun import AZ, GR, NA, coma, formato_df, nueva_figura
+from comun import AZ, GR, NA, coma, formato_df, nueva_figura, aplicar_estilo
 import matplotlib.pyplot as plt
 
 COLORES = {"cumplida": "success", "esperar": "warning", "tope": "error"}
@@ -14,6 +14,7 @@ TITULOS = {"cumplida": "Se cumple la condición de salida", "esperar": "Esperar"
 
 
 def mostrar(conn, usuario):
+    aplicar_estilo()
     st.header("Decisión del día: ¿esperar o salir?")
     st.write("Ingrese cómo está la salida en este momento. El sistema calcula la probabilidad de que lleguen los "
              "ausentes a tiempo y cuánto habría que esperar con la regla vigente.")
@@ -46,7 +47,22 @@ def mostrar(conn, usuario):
 
 def _resultado(conn, usuario, u):
     res, estado, par, k = u["res"], u["estado"], u["par"], u["k"]
-    getattr(st, COLORES[res["estado"]])(f"**{TITULOS[res['estado']]}.** {res['mensaje']}")
+    # Determinar color y título según el estado
+    if res["estado"] == "cumplida":
+        color_titulo = "green"
+        titulo_color = "Se cumple la condición de salida"
+    elif res["estado"] == "tope":
+        color_titulo = "red"
+        titulo_color = "Se alcanzó la espera máxima"
+    else:
+        color_titulo = "orange"
+        titulo_color = "Esperar"
+    
+    st.markdown(f'<div class="tarjeta" style="border-left: 4px solid {color_titulo}">'
+                f'<h2 style="color: {color_titulo};">{titulo_color}</h2>'
+                f'{res["mensaje"]}</div>',
+                unsafe_allow_html=True)
+    
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Ausentes", res["ausentes"])
     c2.metric("Llegadas necesarias", res["llegadas_necesarias"])
@@ -67,8 +83,8 @@ def _resultado(conn, usuario, u):
     st.dataframe(formato_df(alt), hide_index=True)
     st.subheader("Sensibilidad al retraso medio de los ausentes (parámetro sintético)")
     sens = u["sens"].rename(columns={"factor": "Factor", "retraso_medio": "Retraso medio (min)",
-                                     "prob_antes_del_tope": "Prob. antes del tope",
-                                     "espera_mediana": "Espera mediana (min)", "espera_esperada": "Espera esperada (min)"})
+                                      "prob_antes_del_tope": "Prob. antes del tope",
+                                      "espera_mediana": "Espera mediana (min)", "espera_esperada": "Espera esperada (min)"})
     st.dataframe(formato_df(sens), hide_index=True)
     st.caption("Si el retraso real de los ausentes es distinto del supuesto, la recomendación cambia así. "
                "Al registrar salidas reales, este parámetro se podrá estimar con datos.")

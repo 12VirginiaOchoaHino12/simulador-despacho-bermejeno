@@ -3,16 +3,16 @@ import streamlit as st
 
 import db
 import simulacion
-from comun import AZ, ETIQUETA_CATEGORIA, GR, coma, formato_df, nueva_figura
-from simulador_despacho import Parametros, Regla
+from comun import AZ, ETIQUETA_CATEGORIA, GR, coma, formato_df, nueva_figura, aplicar_estilo
 import matplotlib.pyplot as plt
+from simulador_despacho import Parametros, Regla
 
 ESCENARIOS = {"Todos (Weibull completa)": "todos", "Baja (≤ P25)": "baja", "Habitual": "habitual",
               "Alta (≥ P75)": "alta"}
-CAPACIDADES = {"36 asientos": 36, "49 asientos (móvil 500)": 49, "Flota real (36 y 49)": None}
 
 
 def mostrar(conn, usuario):
+    aplicar_estilo()
     st.header("Simulación")
     st.warning("Los resultados son del **modelo** con parámetros **sintéticos** (supuestos, no observados). "
                "Muestran cómo se comportarían las reglas bajo esos supuestos; no demuestran una mejora real.")
@@ -43,7 +43,7 @@ def _controles(conn, par_bd):
                    f"{ETIQUETA_CATEGORIA[cats['minimo_fraccion']]}.")
     c1, c2, c3, c4 = st.columns(4)
     esc = ESCENARIOS[c1.selectbox("Escenario de demanda", list(ESCENARIOS))]
-    cap = CAPACIDADES[c2.selectbox("Capacidad", list(CAPACIDADES))]
+    cap = {"36 asientos": 36, "49 asientos (móvil 500)": 49, "Flota real (36 y 49)": None}[c2.selectbox("Capacidad", list({"36 asientos": 36, "49 asientos (móvil 500)": 49, "Flota real (36 y 49)": None}.keys()))]
     nrep = int(c3.number_input("Réplicas", 100, 5000, 1000, 100))
     semilla = int(c4.number_input("Semilla", 1, 999999, 1000, 1))
     par = Parametros(p_puntual=p_punt, mu_tarde=mu, cierre_min=cmin, cierre_max=cmax, tope=tope)
