@@ -1,0 +1,94 @@
+erDiagram
+    USUARIOS ||--o{ REGISTROS_SALIDA : registra
+    USUARIOS ||--o{ CORRIDAS : ejecuta
+    BUSES ||--o{ VIAJES : "se usa en"
+    BUSES ||--o{ REGISTROS_SALIDA : "se usa en"
+    CORRIDAS ||--|{ RESULTADOS_REGLA : produce
+    USUARIOS ||--o{ CONSULTAS_DECISION : consulta
+
+    USUARIOS {
+        int id PK
+        text usuario UK
+        text rol
+        text sal
+        text hash
+        int activo
+    }
+    BUSES {
+        int numero PK
+        int capacidad
+        text fuente
+    }
+    VIAJES {
+        int id PK
+        text codigo UK
+        text fecha
+        text ruta
+        text tipo_hoja
+        int bus FK
+        int pasajeros
+        int pasajeros_oruro
+        int capacidad
+        text calidad
+        text categoria
+    }
+    REGISTROS_SALIDA {
+        int id PK
+        text fecha
+        int bus FK
+        int pasajeros_pasaje
+        int ausentes
+        int llegaron_tarde
+        text hora_salida_real
+        real demora_min
+        int usuario_id FK
+    }
+    SALIDAS_OBSERVADAS {
+        int id PK
+        text salida_real
+        real demora_min
+        text categoria
+    }
+    PARAMETROS {
+        text clave PK
+        real valor
+        text categoria
+        text fuente
+    }
+    CORRIDAS {
+        int id PK
+        text escenario
+        int capacidad
+        int nrep
+        int semilla
+        text parametros_json
+        int usuario_id FK
+    }
+    RESULTADOS_REGLA {
+        int id PK
+        int corrida_id FK
+        text regla
+        int umbral_k
+        real espera_max_T
+        real demora_media
+        real ocupacion_media
+        real dif_demora
+    }
+    CONSULTAS_DECISION {
+        int id PK
+        int usuario_id FK
+        int capacidad
+        int a_bordo
+        int vendidos_oruro
+        int presentes
+        real minutos
+        text estado
+        real prob_antes_del_tope
+        text decision_tomada
+    }
+    BITACORA {
+        int id PK
+        text fecha
+        text usuario
+        text accion
+    }

@@ -1,0 +1,32 @@
+flowchart TB
+    subgraph PRES["Capa de presentación (Streamlit)"]
+        APP["app.py<br/>inicio de sesión y menú por rol"]
+        PAG["paginas/<br/>resumen · decisión del día · datos · demanda · simulación · historial · administración"]
+    end
+    subgraph LOG["Capa de lógica"]
+        SEG["seguridad.py<br/>hash, roles, permisos"]
+        ANA["analisis.py<br/>descriptiva, ajuste, pruebas"]
+        SIM["simulacion.py<br/>reglas, IC, sensibilidad"]
+        REC["recomendacion.py<br/>esperar o salir, en vivo"]
+        MOD["simulador_despacho.py<br/>eventos discretos"]
+    end
+    subgraph DAT["Capa de datos"]
+        DB["db.py<br/>esquema y consultas"]
+        IMP["importar.py / registro.py<br/>depuración y validación"]
+        BD[("SQLite<br/>bermejeno.db")]
+    end
+    XLS["Excel de registros<br/>históricos"] --> IMP
+    APP --> PAG
+    APP --> SEG
+    PAG --> ANA
+    PAG --> SIM
+    PAG --> REC
+    REC --> MOD
+    REC --> DB
+    PAG --> IMP
+    SIM --> MOD
+    ANA --> DB
+    SIM --> DB
+    SEG --> DB
+    IMP --> DB
+    DB --> BD
