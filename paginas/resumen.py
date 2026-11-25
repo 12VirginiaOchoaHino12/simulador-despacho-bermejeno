@@ -2,12 +2,10 @@
 import streamlit as st
 
 import analisis
-from comun import AZ, GR, NA, coma, formato_df, nueva_figura, aplicar_estilo
-import matplotlib.pyplot as plt
+from comun import AZ, coma, formato_df, nueva_figura
 
 
 def mostrar(conn, usuario):
-    aplicar_estilo()
     st.header("Resumen de la operación")
     st.caption("Sucursal Oruro · salida Oruro–Tarija–Bermejo · Expreso El Bermejeño S.R.L.")
     solo_ok = st.checkbox("Usar solo registros con calidad OK", value=False, key="resumen_solo_ok")
@@ -17,12 +15,10 @@ def mostrar(conn, usuario):
         return
     r = analisis.resumen_general(df)
     c1, c2, c3, c4 = st.columns(4)
-    st.markdown('<div class="tarjeta">', unsafe_allow_html=True)
-    st.metric("Viajes", r["viajes"])
-    st.metric("Pasajes vendidos", r["pasajeros"])
-    st.metric("Ocupación media", f"{coma(r['ocupacion_media'])} %")
-    st.metric("Registros por revisar", r["revisar"])
-    st.markdown('</div>', unsafe_allow_html=True)
+    c1.metric("Viajes", r["viajes"])
+    c2.metric("Pasajes vendidos", r["pasajeros"])
+    c3.metric("Ocupación media", f"{coma(r['ocupacion_media'])} %")
+    c4.metric("Registros por revisar", r["revisar"])
 
     st.subheader("Ocupación media por mes")
     mes = analisis.por_mes(df)
@@ -35,7 +31,6 @@ def mostrar(conn, usuario):
     ax.tick_params(axis="x", rotation=30)
     fig.tight_layout()
     st.pyplot(fig)
-    plt.close(fig)
     st.dataframe(formato_df(mes.rename(columns={"viajes": "Viajes", "pasajeros": "Pasajes",
                                                 "pasajeros_oruro": "Pasajes Oruro", "ocupacion": "Ocupación (%)"})),
                  hide_index=True)

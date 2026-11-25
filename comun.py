@@ -4,12 +4,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-COLOR_PRINCIPAL = "#1F3A5F"   # color de la empresa
-COLOR_SECUNDARIO = "#C8102E"  # color de acento
-COLOR_FONDO = "#F7F8FA"
-COLOR_TEXTO = "#1A1A1A"
-
-AZ, NA, GR, VE = COLOR_PRINCIPAL, COLOR_SECUNDARIO, "#444444", "#2E7D32"
+AZ, NA, GR, VE = "#1F4E79", "#D97B00", "#444444", "#2E7D32"
 
 # Texto de los graficos: minimo 8 pt (observacion del docente)
 plt.rcParams.update({"font.family": ["Arial", "Liberation Sans", "DejaVu Sans"], "font.size": 10,
@@ -39,40 +34,3 @@ def formato_df(df, decimales=2):
         if out[c].dtype.kind == "f":
             out[c] = out[c].round(decimales)
     return out
-
-
-def aplicar_estilo():
-    """Inyecta CSS estilo empresa para tarjetas, botones y separación de secciones.
-    
-    Debe llamarse desde app.py cuando ya existe el objeto st de Streamlit.
-    En contextos donde st no está disponible (pruebas de importación), la función hace nada.
-    """
-    try:
-        import streamlit as _st
-        _st.markdown(
-            """
-            <style>
-            .tarjeta {
-                padding: 1rem;
-                border-radius: 0.5rem;
-                background-color: white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                margin-bottom: 1rem;
-            }}
-            .btn-principal > button {
-                background-color: #1F3A5F;
-                color: white;
-                border-radius: 0.3rem;
-                border: none;
-                padding: 0.5rem 1rem;
-                font-size: 1rem;
-            }}
-            .espacio {
-                margin-top: 2rem;
-                margin-bottom: 2rem;
-            }}
-            """,
-            unsafe_allow_html=True,
-        )
-    except Exception:
-        pass

@@ -2,4 +2,3 @@ __pycache__/
 .pytest_cache/
 *.pyc
 datos/bermejeno.db
-pytest_*.txt

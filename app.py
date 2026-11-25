@@ -10,17 +10,16 @@ import streamlit as st
 
 import db
 import seguridad
-from comun import aplicar_estilo
 from paginas import administracion, datos, decision, demanda, historial, resumen
 from paginas import simulacion as pagina_simulacion
 
 MAX_INTENTOS = 5
 
 PAGINAS = {
-    "Inicio": (resumen.mostrar, "ver"),
-    "Salida de hoy": (decision.mostrar, "simular"),
-    "Viajes y datos": (datos.mostrar, "ver"),
-    "Demanda": (demanda.mostrar, "ver"),
+    "Resumen": (resumen.mostrar, "ver"),
+    "Decisión del día": (decision.mostrar, "simular"),
+    "Datos": (datos.mostrar, "ver"),
+    "Demanda y ocupación": (demanda.mostrar, "ver"),
     "Simulación": (pagina_simulacion.mostrar, "simular"),
     "Historial": (historial.mostrar, "ver"),
     "Administración": (administracion.mostrar, "usuarios"),
@@ -44,8 +43,8 @@ def _crear_primer_administrador(conn):
 
 
 def _iniciar_sesion(conn):
-    st.title("Expreso El Bermejeño")
-    st.caption("Sucursal Oruro")
+    st.title("Sistema de apoyo a la decisión · El Bermejeño")
+    st.caption("Despacho de la salida Oruro–Tarija–Bermejo")
     intentos = st.session_state.get("intentos", 0)
     if intentos >= MAX_INTENTOS:
         st.error("Demasiados intentos fallidos. Cierre y vuelva a abrir la página para intentar de nuevo.")
@@ -67,41 +66,8 @@ def _iniciar_sesion(conn):
             st.rerun()
 
 
-def aplicar_estilo():
-    """Inyecta CSS estilo empresa para tarjetas, botones y separación de secciones."""
-    try:
-        import streamlit as _st
-        _st.markdown(
-            """
-            <style>
-            .tarjeta {
-                padding: 1rem;
-                border-radius: 0.5rem;
-                background-color: white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                margin-bottom: 1rem;
-            }}
-            .btn-principal > button {
-                background-color: #1F3A5F;
-                color: white;
-                border-radius: 0.3rem;
-                border: none;
-                padding: 0.5rem 1rem;
-                font-size: 1rem;
-            }}
-            .espacio {
-                margin-top: 2rem;
-                margin-bottom: 2rem;
-            }}
-            """,
-            unsafe_allow_html=True,
-        )
-    except Exception:
-        pass
-
-
 def principal():
-    st.set_page_config(page_title="Expreso El Bermejeño", layout="wide")
+    st.set_page_config(page_title="El Bermejeño · SAD", page_icon="🚌", layout="wide")
     conn = db.iniciar(db.conectar(os.environ.get("BERMEJENO_DB")))
     try:
         if not seguridad.hay_usuarios(conn):
@@ -111,10 +77,8 @@ def principal():
         if usuario is None:
             _iniciar_sesion(conn)
             return
-        aplicar_estilo()
-        st.sidebar.title("Expreso El Bermejeño")
-        st.sidebar.write(f"Usuario: **{usuario['usuario']}**")
-        st.sidebar.markdown(f"***{usuario['rol'].upper()}***")
+        st.sidebar.title("El Bermejeño")
+        st.sidebar.write(f"Usuario: **{usuario['usuario']}** ({usuario['rol']})")
         if st.sidebar.button("Cerrar sesión"):
             db.registrar_bitacora(conn, usuario["usuario"], "logout")
             del st.session_state["usuario"]

@@ -6,11 +6,10 @@ import streamlit as st
 
 import seguridad
 import simulacion
-from comun import aplicar_estilo, formato_df
+from comun import formato_df
 
 
 def mostrar(conn, usuario):
-    aplicar_estilo()
     st.header("Historial")
     corridas = simulacion.listar_corridas(conn)
     st.subheader("Corridas de simulación guardadas")

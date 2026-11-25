@@ -4,11 +4,10 @@ import streamlit as st
 
 import db
 import seguridad
-from comun import aplicar_estilo, ETIQUETA_CATEGORIA
+from comun import ETIQUETA_CATEGORIA
 
 
 def mostrar(conn, usuario):
-    aplicar_estilo()
     st.header("Administración")
     if not seguridad.tiene_permiso(usuario["rol"], "usuarios"):
         st.error("No tiene permiso para esta página.")
@@ -29,13 +28,9 @@ def _parametros(conn, usuario):
     claves = list(df["clave"])
     clave = st.selectbox("Parámetro a modificar", claves, key="adm_clave")
     nuevo = st.number_input("Nuevo valor", value=float(conn.execute("SELECT valor FROM parametros WHERE clave = ?",
-                                                                     (clave,)).fetchone()[0]), key="adm_valor")
+                                                                    (clave,)).fetchone()[0]), key="adm_valor")
     if st.button("Guardar parámetro", key="adm_guardar"):
-        try:
-            db.guardar_parametro(conn, clave, nuevo)
-        except ValueError as e:
-            st.error(str(e))
-            return
+        db.guardar_parametro(conn, clave, nuevo)
         db.registrar_bitacora(conn, usuario["usuario"], "modificar_parametro", f"{clave}={nuevo}")
         st.success(f"{clave} actualizado.")
 
@@ -52,8 +47,9 @@ def _usuarios(conn, usuario):
     if enviar:
         try:
             seguridad.crear_usuario(conn, nombre, clave, rol)
+            db.registrar_bitacora(conn, usuario["usuario"], "crear_usuario", f"{nombre} ({rol})")
+            st.success(f"Usuario {nombre} creado.")
         except ValueError as e:
             st.error(str(e))
-            return
-        db.registrar_bitacora(conn, usuario["usuario"], "crear_usuario", f"{nombre} ({rol})")
-        st.success(f"Usuario {nombre} creado.")
+        except Exception:
+            st.error("No se pudo crear el usuario (¿ya existe?).")
