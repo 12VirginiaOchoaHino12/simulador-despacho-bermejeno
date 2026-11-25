@@ -6,6 +6,7 @@ import db
 import recomendacion
 import simulacion
 from comun import AZ, GR, NA, coma, formato_df, nueva_figura
+import matplotlib.pyplot as plt
 
 COLORES = {"cumplida": "success", "esperar": "warning", "tope": "error"}
 TITULOS = {"cumplida": "Se cumple la condición de salida", "esperar": "Esperar",
@@ -101,3 +102,4 @@ def _curva(estado, res, par, k):
     ax.set_ylim(0, 102)
     fig.tight_layout()
     st.pyplot(fig)
+    plt.close(fig)

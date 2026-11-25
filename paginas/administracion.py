@@ -30,7 +30,11 @@ def _parametros(conn, usuario):
     nuevo = st.number_input("Nuevo valor", value=float(conn.execute("SELECT valor FROM parametros WHERE clave = ?",
                                                                     (clave,)).fetchone()[0]), key="adm_valor")
     if st.button("Guardar parámetro", key="adm_guardar"):
-        db.guardar_parametro(conn, clave, nuevo)
+        try:
+            db.guardar_parametro(conn, clave, nuevo)
+        except ValueError as e:
+            st.error(str(e))
+            return
         db.registrar_bitacora(conn, usuario["usuario"], "modificar_parametro", f"{clave}={nuevo}")
         st.success(f"{clave} actualizado.")
 

@@ -5,6 +5,7 @@ from scipy import stats
 
 import analisis
 from comun import AZ, GR, NA, coma, formato_df, nueva_figura
+import matplotlib.pyplot as plt
 
 
 def mostrar(conn, usuario):
@@ -50,6 +51,7 @@ def _ocupacion_tipo(df):
     ax.legend(frameon=False, loc="lower right")
     fig.tight_layout()
     st.pyplot(fig)
+    plt.close(fig)
     c = analisis.comparar_tipos(df)
     if c:
         st.write(f"Mediana Oruro→Bermejo: {coma(c['mediana_oruro_bermejo'])} % · recorrido completo: "
@@ -76,6 +78,7 @@ def _distribucion(df):
     ax.legend(frameon=False)
     fig.tight_layout()
     st.pyplot(fig)
+    plt.close(fig)
 
 
 def _dia_escenarios(df):

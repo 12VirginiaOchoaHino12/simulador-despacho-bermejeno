@@ -6,6 +6,10 @@ Cada dato lleva una categoria de origen: observado, historico, por_obtener, sint
 import sqlite3
 from pathlib import Path
 
+# Rangos de validación de parámetros (mismo conjunto que usa simulacion.LIMITES)
+LIMITES = {"p_puntual": (0.0, 1.0), "mu_tarde": (0.1, 60.0), "cierre_min": (0.0, 60.0),
+           "cierre_max": (0.0, 60.0), "tope": (0.0, 120.0)}
+
 RUTA_BD = Path(__file__).resolve().parent / "datos" / "bermejeno.db"
 
 ESQUEMA = """
@@ -216,6 +220,10 @@ def leer_parametros(conn):
 
 def guardar_parametro(conn, clave, valor):
     if conn.execute("SELECT 1 FROM parametros WHERE clave = ?", (clave,)).fetchone() is None:
-        raise KeyError(f"Parametro desconocido: {clave}")
+        raise ValueError(f"Parametro desconocido: {clave}")
+    if clave in LIMITES:
+        lo, hi = LIMITES[clave]
+        if not lo <= float(valor) <= hi:
+            raise ValueError(f"{clave} = {float(valor)} fuera del rango [{lo}, {hi}]")
     conn.execute("UPDATE parametros SET valor = ? WHERE clave = ?", (float(valor), clave))
     conn.commit()

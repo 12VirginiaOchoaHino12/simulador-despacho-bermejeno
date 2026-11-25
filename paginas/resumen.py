@@ -3,6 +3,7 @@ import streamlit as st
 
 import analisis
 from comun import AZ, coma, formato_df, nueva_figura
+import matplotlib.pyplot as plt
 
 
 def mostrar(conn, usuario):
@@ -31,6 +32,7 @@ def mostrar(conn, usuario):
     ax.tick_params(axis="x", rotation=30)
     fig.tight_layout()
     st.pyplot(fig)
+    plt.close(fig)
     st.dataframe(formato_df(mes.rename(columns={"viajes": "Viajes", "pasajeros": "Pasajes",
                                                 "pasajeros_oruro": "Pasajes Oruro", "ocupacion": "Ocupación (%)"})),
                  hide_index=True)

@@ -98,7 +98,14 @@ def test_salidas_observadas_iniciales(conn):
 
 
 def test_guardar_parametro_desconocido_falla(conn):
-    with pytest.raises(KeyError):
+    with pytest.raises(ValueError):
         db.guardar_parametro(conn, "no_existe", 1)
     db.guardar_parametro(conn, "umbral_k", 7)
     assert db.leer_parametros(conn)[0]["umbral_k"] == 7
+
+
+def test_guardar_parametro_fuera_de_rango(conn):
+    with pytest.raises(ValueError):
+        db.guardar_parametro(conn, "p_puntual", 1.5)
+    with pytest.raises(ValueError):
+        db.guardar_parametro(conn, "mu_tarde", 70.0)

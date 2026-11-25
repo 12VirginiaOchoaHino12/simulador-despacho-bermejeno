@@ -5,6 +5,7 @@ import db
 import simulacion
 from comun import AZ, ETIQUETA_CATEGORIA, GR, coma, formato_df, nueva_figura
 from simulador_despacho import Parametros, Regla
+import matplotlib.pyplot as plt
 
 ESCENARIOS = {"Todos (Weibull completa)": "todos", "Baja (≤ P25)": "baja", "Habitual": "habitual",
               "Alta (≥ P75)": "alta"}
@@ -71,6 +72,7 @@ def _una_regla(par, k, esc, cap, nrep, semilla):
     ax.set_ylabel("Frecuencia")
     fig.tight_layout()
     st.pyplot(fig)
+    plt.close(fig)
 
 
 def _comparar(conn, usuario, par, k, esc, cap, nrep, semilla):
@@ -105,6 +107,7 @@ def _comparar(conn, usuario, par, k, esc, cap, nrep, semilla):
     ax.set_xlabel("Demora media simulada (min)")
     fig.tight_layout()
     st.pyplot(fig)
+    plt.close(fig)
     for linea in simulacion.explicar(tabla):
         st.write("• " + linea)
     cid = simulacion.guardar_corrida(conn, tabla, esc, cap, nrep, semilla, par, usuario["id"], etiqueta or None)
@@ -138,4 +141,5 @@ def _sensibilidad(par, k, esc, cap, nrep, semilla):
     ax.legend(frameon=False, loc="lower right")
     fig.tight_layout()
     st.pyplot(fig)
+    plt.close(fig)
     st.dataframe(formato_df(tabla), hide_index=True)
